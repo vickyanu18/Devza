@@ -1,0 +1,106 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.float-right {
+  float: right;
+}
+
+.today-date {
+  margin-top: 2px;
+}
+
+
+#overlayDiv {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 99;
+  opacity: 0.9;
+
+  #logo {
+    width: 90px;
+    height: 90px;
+    background: url('../images/devza_logo.png') center no-repeat;
+    background-size: 60%;
+    // margin: 0 auto;
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, 0);
+
+  }
+}
+
+.app-loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #594a42;
+  width: 90px;
+  height: 90px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+  /* left, top and position just for the demo! */
+
+
+  @-webkit-keyframes spin {
+      0% {
+          -webkit-transform: rotate(0deg);
+      }
+
+      100% {
+          -webkit-transform: rotate(360deg);
+      }
+  }
+
+  @keyframes spin {
+      0% {
+          transform: rotate(0deg);
+      }
+
+      100% {
+          transform: rotate(360deg);
+      }
+  }
+
+}

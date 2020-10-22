@@ -1,0 +1,92 @@
+.task-list {
+  .segment {
+    height: calc(100vh - 176px);
+    overflow-y: auto;
+  }
+
+  .content {
+    padding: 22px 20px 10px 20px !important;
+  }
+}
+
+.task-list-card {
+  text-align: left;
+
+  .label {
+    font-size: 6px;
+    margin-right: 20px;
+  }
+
+  span {
+    font-size: 20px;
+  }
+
+  .task-due-date {
+    float: right;
+    margin-top: 3px;
+    border: 1px solid #0099ff;
+    border-radius: 20px;
+    padding: 7px 20px 4px 20px;
+    color: #0099ff;
+  }
+
+  .task-assigned {
+    float: left;
+    margin-top: 10px;
+    margin-left: -7px;
+    color: black;
+
+    span {
+      font-size: 16px;
+      padding-left: 10px;
+
+    }
+  }
+}
+
+
+.task-action-bar {
+  margin: 0 0 15px 0;
+
+  button {
+    margin: 0 10px 0 0 !important;
+
+
+    &.delete-task {
+      background: white;
+      font-size: 14px;
+      color: #d72f2f;
+
+      &:hover {
+        background: whitesmoke;
+        color: #d72f2f;
+        transform: scale(1.4);
+      }
+    }
+
+    &.edit-task {
+      background: white;
+      font-size: 14px;
+      color: #594a42;
+
+
+      &:hover {
+        background: whitesmoke;
+        color: #594a42;
+        transform: scale(1.4);
+      }
+    }
+  }
+}
+
+.clear-btn {
+  color: #287bfe;
+  cursor: pointer;
+  font-weight: bold;
+  padding-left: 10px;
+
+  &:hover{
+    text-decoration: underline;
+  }
+
+}

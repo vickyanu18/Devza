@@ -6,9 +6,17 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "axios": "^0.20.0",
+    "formsy-react": "^2.2.1",
+    "formsy-semantic-ui-react": "^2.0.6",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1",
+    "node-sass": "^4.14.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

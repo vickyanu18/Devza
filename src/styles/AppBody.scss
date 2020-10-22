@@ -1,0 +1,49 @@
+.app-body {
+  height: calc(100vh - 90px);
+  padding: 0 30px !important;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 38px;
+  z-index: 2;
+  height: 50px;
+  width: 50px;
+  padding: 16px 19px !important;
+  background: #007bff !important;
+  border-radius: 50% !important;
+  font-size: 18px !important;
+  color: white;
+  text-align: center;
+  box-shadow: 0 4px 10px -3px #1f1c14 !important;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  i {
+    color: white !important;
+
+    &:hover {
+      color: white !important;
+    }
+  }
+}
+
+
+.btn-agree{
+  background: #007bff !important;
+  color: white !important;
+
+  &:hover{
+    background: rgba(0, 123, 555, 0.7) !important;
+  }
+}
+
+.create-modal{
+  .actions{
+    text-align: right;
+  }
+}
