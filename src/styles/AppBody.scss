@@ -1,6 +1,9 @@
 .app-body {
   height: calc(100vh - 90px);
   padding: 0 30px !important;
+  white-space: nowrap;
+  width: 100% !important;
+  overflow-y: auto;
 }
 
 .floating-btn {

@@ -28,79 +28,20 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .float-right {
   float: right;
 }
 
-.today-date {
-  margin-top: 2px;
+
+.noPaddingTop {
+  padding-top: 0 !important;
 }
 
+.noPaddingBottom {
+  padding-bottom: 0 !important;
 
-#overlayDiv {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  z-index: 99;
-  opacity: 0.9;
-
-  #logo {
-    width: 90px;
-    height: 90px;
-    background: url('../images/devza_logo.png') center no-repeat;
-    background-size: 60%;
-    // margin: 0 auto;
-    position: absolute;
-    left: 50%;
-    top: 40%;
-    transform: translate(-50%, 0);
-
-  }
 }
 
-.app-loader {
-  border: 3px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 3px solid #594a42;
-  width: 90px;
-  height: 90px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-  /* left, top and position just for the demo! */
-
-
-  @-webkit-keyframes spin {
-      0% {
-          -webkit-transform: rotate(0deg);
-      }
-
-      100% {
-          -webkit-transform: rotate(360deg);
-      }
-  }
-
-  @keyframes spin {
-      0% {
-          transform: rotate(0deg);
-      }
-
-      100% {
-          transform: rotate(360deg);
-      }
-  }
-
+.table-records {
+  width: 100% !important;
 }

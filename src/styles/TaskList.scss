@@ -1,7 +1,11 @@
 .task-list {
   .segment {
-    height: calc(100vh - 176px);
+    height: calc(100vh - 153px);
     overflow-y: auto;
+  }
+
+  .column{
+    min-width: 360px !important;
   }
 
   .content {
@@ -12,41 +16,29 @@
 .task-list-card {
   text-align: left;
 
-  .label {
-    font-size: 6px;
-    margin-right: 20px;
+  .header {
+    color: #007cff !important;
   }
 
-  span {
-    font-size: 20px;
+
+  .comments {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.74) !important;
   }
 
-  .task-due-date {
-    float: right;
-    margin-top: 3px;
-    border: 1px solid #0099ff;
-    border-radius: 20px;
-    padding: 7px 20px 4px 20px;
-    color: #0099ff;
-  }
-
-  .task-assigned {
-    float: left;
-    margin-top: 10px;
-    margin-left: -7px;
-    color: black;
-
-    span {
-      font-size: 16px;
-      padding-left: 10px;
-
-    }
+  .comments-time{
+    font-size: 12px;
+    color: #000 !important;
+    font-weight: 900;
+    margin-top: 6px;
+    margin-bottom: 10px;
   }
 }
 
 
 .task-action-bar {
   margin: 0 0 15px 0;
+  display: inline;
 
   button {
     margin: 0 10px 0 0 !important;
@@ -79,14 +71,35 @@
   }
 }
 
-.clear-btn {
-  color: #287bfe;
+
+.card-delete {
+  font-size: 14px !important;
+  color: red;
+  float: right;
   cursor: pointer;
-  font-weight: bold;
-  padding-left: 10px;
-
   &:hover{
-    text-decoration: underline;
+    transform: scale(1.2);
   }
+}
 
+.edit-timer{
+  margin-top: -12px !important;
+  font-size: 12px !important;
+  color: #ff7300 !important;
+}
+
+.add-card-btn{
+  background: orange !important;
+  color: white !important;
+  &:hover{
+    background: rgb(250, 196, 96) !important;
+  }
+}
+
+.delete-card-btn{
+  background: rgb(236, 35, 35) !important;
+  color: white !important;
+  &:hover{
+    background: rgb(250, 102, 102) !important;
+  }
 }

@@ -1,12 +1,15 @@
 import React, { Component, Fragment } from "react";
-import { Grid, Image, Icon, Segment, Header, Card, Popup, Label, Button, Input, Modal } from 'semantic-ui-react';
+import { Grid, Image, Icon, Segment, Header, Card, Popup, Label, Button, Input, Modal, Table } from 'semantic-ui-react';
 import Service from "../scripts/Service";
 import _, { isObject } from 'lodash';
 import moment from 'moment';
 import LoadingMask from "./LoadingMask";
+import { Form } from 'formsy-semantic-ui-react';
+import Cards from './Cards'
 
 
-class TaskList extends Component {
+
+class recordList extends Component {
 
   constructor(props) {
     super(props);
@@ -14,290 +17,208 @@ class TaskList extends Component {
     this.state = {
       Service: new Service(),
 
-      taskList: [],
-      taskListData: [],
+      listArr: [],
       openModal: false,
       currentDateTime: moment().format('DD MMM YYYY'),
-      loadingMask: false
+      loadingMask: false,
+      commentsArr: []
     }
   }
-
-
 
   componentDidMount() {
-    this.getTaskList();
-  }
-
-  componentDidUpdate(prevProps) {
-    console.log('------------', prevProps.refresh, this.props.refresh)
-    if (prevProps.refresh !== this.props.refresh) {
-      this.getTaskList();
-    }
-  }
-
-  getTaskList() {
-    this.setState({
-      loadingMask: true
-    })
-    var data = this.state.Service.Get('list');
-    data.then(function (res) {
-      this.setState({
-        taskListData: res.tasks,
-        loadingMask: false
-      })
-      this.groupTaskList(res.tasks);
-      this.props.reset();
-    }.bind(this));
-
-    data.catch(function () {
-    }.bind(this));
-  }
-
-
-  groupTaskList(data) {
-    var grouped = _.groupBy(data, 'priority');
-
-    this.setState({
-      taskList: grouped
-    });
-  }
-
-
-  onDrag(ev, data, flag) {
-    this.setState({
-      task_id: data,
-      dropPriority: flag
-    });
-  }
-
-  onDragOver(ev) {
-    ev.preventDefault();
-  }
-
-  onDrop(ev, flag, data) {
-    ev.preventDefault();
-    this.onDropTask(flag, data);
-  }
-
-  onDropTask(flag, formValues) {
-    var priorityid;
-    switch (flag) {
-      case 'high':
-        priorityid = 3;
-        break;
-      case 'medium':
-        priorityid = 2;
-        break;
-      case 'low':
-        priorityid = 1;
-        break;
-    }
-
-
-    var formData = new FormData();
-    formData.append('priority', priorityid);
-    formData.append('taskid', this.state.task_id);
-
-
-    if (this.state.dropPriority !== flag) {
-      this.setState({
-        loadingMask: true
-      });
-
-      var data = this.state.Service.Post('update', formData);
-
-      data.then(function (res) {
-        this.getTaskList();
-      }.bind(this));
-
-      data.catch(function (res) {
-
-      });
-    }
+    this.getRecordList();
   }
 
   editTask(data) {
     this.props.editTask(true, data);
   }
 
-  deleteTask(id) {
+  getRecordList() {
     this.setState({
-      loader: true,
-      disabledBtn: true
+      listArr: JSON.parse(this.state.Service.Get())
     })
-    var deleteObj = new FormData();
-    deleteObj.append('taskid', this.state.deleteTaskID)
-
-    var data = this.state.Service.Post('delete', deleteObj);
-    data.then(function (res) {
-      this.getTaskList();
-      this.setState({
-        openModal: false,
-        loader: false,
-        disabledBtn: false
-      });
-    }.bind(this));
-
-    data.catch(function () {
-    }.bind(this));
   }
 
-
-
-  getAssignedUser(id, name) {
-    let getUser = _.filter(this.props.userList, function (user) {
-      return user.id === id;
-    });
-
-    if (getUser.length > 0) {
-      return (
-        <div>
-          <Image avatar src={getUser[0].picture} /> <span>{name}</span>
-        </div>
-      )
+  componentDidUpdate(prevProps) {
+    if (prevProps.refresh !== this.props.refresh) {
+      this.getRecordList();
+      this.props.reset();
     }
   }
 
 
-  searchTask(e) {
-    var results = _.filter(this.state.taskListData, function (elem) {
-      return _.lowerCase(elem.message).indexOf(_.lowerCase(e.target.value)) > -1;
-    });
+  onValidSubmit = (formValue) => {
+    this.state.Service.createCard(formValue, this.state.cardKey);
+    this.getRecordList();
     this.setState({
-      searchValue: e.target.value
-    });
-
-    this.groupTaskList(results);
+      openModal: false
+    })
   }
 
-  clearSearch() {
+
+  addList(key) {
     this.setState({
-      searchValue: ''
-    });
-
-    this.groupTaskList(this.state.taskListData);
-
+      openModal: true,
+      cardKey: key,
+      isEdit: false
+    })
   }
+
+  closeModal() {
+    this.setState({
+      openModal: false
+    })
+  }
+
+  resetForm() {
+    this.setState({
+      comments: '',
+      title: ''
+    })
+  }
+
+  editCard(title, key, listKey) {
+    this.setState({ openModal: true, cardKey: listKey, isEdit: true, title: this.state.listArr[listKey][key].title, commentsArr: this.state.listArr[listKey][key].comments })
+  }
+
+  onDragOver(ev) {
+    ev.preventDefault();
+  }
+
+  onDrop(ev, key) {
+    ev.preventDefault();
+    console.log('drop', key)
+
+    this.onDropCard(key);
+  }
+
+  onDropCard(dropKey) {
+    this.state.Service.dragDrop(this.state.dragKey, dropKey, this.state.dragCardKey);
+    this.getRecordList();
+  }
+
+  cardDrag(key, cardKey) {
+    this.setState({
+      dragKey: key,
+      dragCardKey: cardKey
+    });
+  }
+
+  deleteList(key) {
+    this.state.Service.deleteList(key);
+    this.getRecordList();
+  }
+
 
   render() {
+    const errorLabel = <Label color="red" pointing />
+
     return (
       <Fragment>
         <LoadingMask show={this.state.loadingMask} />
-        <Grid>
-          <Grid.Column width={16} textAlign='left'>
-            <Input className='task-search' value={this.state.searchValue} onChange={(e) => this.searchTask(e)} icon='search' placeholder='Search by Task Name...' />
-            {this.state.searchValue && <span onClick={() => this.clearSearch()} className='clear-btn'>clear</span>}
-            <Label size='large' className='float-right today-date' color='teal'>{this.state.currentDateTime}</Label>
-          </Grid.Column>
-        </Grid>
-        {_.size(this.state.taskList) > 0 ?
+        {_.size(this.state.listArr) > 0 ?
           <Fragment>
             <Grid className='task-list' columns='equal'>
-              <Grid.Column>
-                <Header as='h3'>High ({_.size(this.state.taskList[3])})</Header>
-                <Segment secondary onDrop={event => this.onDrop(event, 'high')} onDragOver={(event => this.onDragOver(event))}>
-                  {_.size(this.state.taskList[3]) > 0 && this.state.taskList[3].map((data, key) => {
-                    return (
-                      <Card className='task-list-card' fluid draggable="true" onDrag={(event) => this.onDrag(event, data.id, 'high')} >
-                        <Card.Content>
-                          <Label color='red' circular></Label><span>{data.message}</span>
-                          <div>
-                            <div title='Due Date' className='task-due-date'>{moment(data.due_date).format('DD MMM YYYY')}</div>
-                            <div className='task-assigned'>{this.getAssignedUser(data.assigned_to, data.assigned_name)}</div>
-                          </div>
-                        </Card.Content>
-                        <div className='task-action-bar'>
-                          <Button title='Delete Task' className='float-right delete-task' circular icon='trash' onClick={() => this.setState({ openModal: true, deleteTaskID: data.id })} />
-                          <Button title='Edit Task' className='float-right edit-task' circular icon='pencil' onClick={() => this.editTask(data)} />
-                        </div>
-                      </Card>
-                    )
-                  })
-                  }
-                </Segment>
-              </Grid.Column>
 
-              <Grid.Column>
-                <Header as='h3'>Medium ({_.size(this.state.taskList[2])})</Header>
+              {this.state.listArr.map((data, key) => {
+                return (
+                  <Grid.Column>
+                    <Header as='h3'>List {key + 1}</Header>
+                    <Segment secondary onDrop={event => this.onDrop(event, key)} onDragOver={(event => this.onDragOver(event))}>
+                      {this.state.listArr[key].length > 0 &&
+                        <Cards listKey={key} data={this.state.listArr[key]} onDrag={(key, cardKey) => this.cardDrag(key, cardKey)} refresh={() => this.getRecordList()} editCard={(title, key, listKey) => this.editCard(title, key, listKey)} />
+                      }
+                      <Button className='add-card-btn' onClick={() => this.addList(key)}>Add Card</Button>
+                      <Button className='delete-card-btn' onClick={() => this.deleteList(key)}>Delete List {key + 1}</Button>
 
-                <Segment secondary onDrop={event => this.onDrop(event, 'medium')} onDragOver={(event => this.onDragOver(event))}>
-                  {_.size(this.state.taskList[2]) > 0 && this.state.taskList[2].map((data, key) => {
-                    return (
-                      <Card className='task-list-card' fluid draggable="true" onDrag={(event) => this.onDrag(event, data.id, 'medium')} >
-                        <Card.Content>
-                          <Label color='orange' circular></Label><span>{data.message}</span>
-                          <div>
-                            <div title='Due Date' className='task-due-date'>{moment(data.due_date).format('DD MMM YYYY')}</div>
-                            <div className='task-assigned'>{this.getAssignedUser(data.assigned_to, data.assigned_name)}</div>
-                          </div>
-                        </Card.Content>
-                        <div className='task-action-bar'>
-                          <Button title='Delete Task' className='float-right delete-task' circular icon='trash' onClick={() => this.setState({ openModal: true, deleteTaskID: data.id })} />
-                          <Button title='Edit Task' className='float-right edit-task' circular icon='pencil' onClick={() => this.editTask(data)} />
-                        </div>
-                      </Card>
-                    )
-                  })
-                  }
-                </Segment>
-              </Grid.Column>
-              <Grid.Column>
-                <Header as='h3'>Low ({_.size(this.state.taskList[1])})</Header>
+                    </Segment>
 
-                <Segment secondary onDrop={event => this.onDrop(event, 'low')} onDragOver={(event => this.onDragOver(event))}>
-                  {_.size(this.state.taskList[1]) > 0 && this.state.taskList[1].map((data, key) => {
-                    return (
-                      <Card className='task-list-card' fluid draggable="true" onDrag={(event) => this.onDrag(event, data.id, 'low')} >
-                        <Card.Content>
-                          <Label color='blue' circular></Label><span>{data.message}</span>
-                          <div>
-                            <div title='Due Date' className='task-due-date'>{moment(data.due_date).format('DD MMM YYYY')}</div>
-                            <div className='task-assigned'>{this.getAssignedUser(data.assigned_to, data.assigned_name)}</div>
-                          </div>
-                        </Card.Content>
-                        <div className='task-action-bar'>
-                          <Button title='Delete Task' className='float-right delete-task' circular icon='trash' onClick={() => this.setState({ openModal: true, deleteTaskID: data.id })} />
-                          <Button title='Edit Task' className='float-right edit-task' circular icon='pencil' onClick={() => this.editTask(data)} />
-                        </div>
-                      </Card>
-                    )
-                  })
-                  }
-                </Segment>
-              </Grid.Column>
+                  </Grid.Column>
+                )
+              })
+              }
             </Grid>
-
-            <Modal
-              dimmer='blurring'
-              open={this.state.openModal}
-              className='create-modal'
-            >
-              <Modal.Header>Delete Task</Modal.Header>
-              <Modal.Content>
-                Are you sure want to delete this task?
-              </Modal.Content>
-              <Modal.Actions>
-                <Button type='button' onClick={() => { this.setState({ openModal: false }) }}>
-                  Close
-                </Button>
-                <Button className='btn-agree' type='button' onClick={() => this.deleteTask()} loading={this.state.loader} disabled={this.state.disabledBtn}>
-                  Delete Task
-                </Button>
-              </Modal.Actions>
-            </Modal>
-
-
           </Fragment>
           : <Header as='h3' icon textAlign='center'>
-            <Header.Content>No Task Found!
-              <div>Click "+" icon on bottom right corner of your screen, To create new task</div>
+            <Header.Content>No List Found!
+              <div>Click "+" icon on bottom right corner of your screen, To create new list</div>
             </Header.Content>
           </Header>
         }
-      </Fragment>
+
+        <Modal
+          dimmer='blurring'
+          open={this.state.openModal}
+          onClose={() => this.closeModal()}
+          className='create-modal'
+        >
+          <Modal.Header>Add Card</Modal.Header>
+          <Modal.Content>
+            <Form
+              ref={(ref) => (this.form = ref)}
+              onValidSubmit={this.onValidSubmit}
+            >
+              <Form.Group widths='equal'>
+
+                <Form.Input
+                  name="title"
+                  label="Card Title"
+                  required
+                  disabled={this.state.isEdit}
+                  value={this.state.title}
+                  validationErrors={{ isDefaultRequiredValue: 'Required Field' }}
+                  errorLabel={errorLabel}
+                />
+
+              </Form.Group>
+
+              <Form.Group widths='equal'>
+                <Form.TextArea
+                  name="comments"
+                  label="Comments"
+                  required
+                  value={this.state.comments}
+                  validationErrors={{ isDefaultRequiredValue: 'Required Field' }}
+                  errorLabel={errorLabel}
+                />
+              </Form.Group>
+              {this.state.isEdit && this.state.commentsArr &&
+                <Fragment>
+                  {this.state.commentsArr.map((data, key) => {
+                    return (
+                      <Grid>
+                        <Grid.Column width={16}>
+                          <Header as='h4' color='grey'>{data.comments}</Header>
+                        </Grid.Column>
+
+                        <Grid.Column width={16} className='noPaddingTop noPaddingBottom'>
+                          <Header as='h5' color='black' className='edit-timer'> {moment(data.dateTime).format('DD MMM YYYY h:ss A')}</Header>
+                        </Grid.Column>
+                      </Grid>
+                    )
+                  })
+
+                  }
+                </Fragment>
+              }
+
+              <Modal.Actions>
+                <Button type='button' onClick={() => { this.form.reset(); this.resetForm(); this.closeModal() }}>
+                  Close
+                </Button>
+                <Button className='btn-agree' loading={this.state.loader} disabled={this.state.disabledBtn}>
+                  Create Card
+                </Button>
+              </Modal.Actions>
+            </Form>
+
+          </Modal.Content>
+
+        </Modal>
+      </Fragment >
     )
   }
 
 }
 
-export default TaskList;
+export default recordList;
